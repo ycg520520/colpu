@@ -1,0 +1,13 @@
+{
+  "name": "colpu",
+  "version": "0.0.1",
+  "description": "基于koa开发的nodejs网站",
+  "main": "app.js",
+  "author": "colpu",
+  "repository":"https://github.com/ycg520520/colpu.git",
+  "keywords": ["colpu","nodejs","mvc","framework"],
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {}
+}

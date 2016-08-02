@@ -1,0 +1,9 @@
+# 这是git忽略列表，push到git时忽略不需要上传的文件
+*~
+.DS_Store
+.idea
+*.zip
+.git
+.sass-cache
+node_modules/*
+dist/*
