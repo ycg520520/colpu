@@ -4,10 +4,26 @@
   "description": "基于koa开发的nodejs网站",
   "main": "app.js",
   "author": "colpu",
-  "repository":"https://github.com/ycg520520/colpu.git",
-  "keywords": ["colpu","nodejs","mvc","framework"],
+  "repository": "https://github.com/ycg520520/colpu.git",
+  "keywords": [
+    "colpu",
+    "nodejs",
+    "mvc",
+    "framework"
+  ],
   "scripts": {},
-  "dependencies": {},
+  "dependencies": {
+    "handlebars": "^4.0.5",
+    "koa": "^2.0.0",
+    "koa-bodyparser": "^2.2.0",
+    "koa-convert": "^1.2.0",
+    "koa-router": "^5.4.0",
+    "koa-session": "^3.3.1",
+    "koa-static": "^2.0.0",
+    "koa-views": "^4.1.0",
+    "moment": "^2.14.1",
+    "mongoose": "^4.5.8"
+  },
   "devDependencies": {},
   "engines": {}
 }
