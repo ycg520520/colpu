@@ -1,4 +1,4 @@
-'use static';
+'use strict';
 const Index = require('../controllers/home/index');
 
 /**
@@ -15,8 +15,9 @@ module.exports = function(router){
 		var data = {
 		  title: '网站错误提示信息:',
 		  status: this.status || 500,
-		  message: this.message || '服务器出错了。',
-		}
+		  message: this.message || '服务器出错了。'
+		};
+
 		switch(data.status){
 		  case 404:
 		    yield this.render('default/404',data);
@@ -27,5 +28,9 @@ module.exports = function(router){
 		  default:
 		    yield this.render('default/error',data);
 		}
+
+		yield* next;
+
 	});
-}
+
+};

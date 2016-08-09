@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-	<title>{{title}}</title>
-</head>
-<body>
-	{{body}}
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block styles %}
+<!-- build:css styles/base.css -->
+<link rel="stylesheet" type="text/css" href="styles/all.css">
+<!-- endbuild -->
+{% endblock %}
+{% block script %}
+<!-- build:js js/base.js -->
+	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="js/index2.js"></script>
+<!-- endbuild -->
+{% endblock %}
+{% block content %}
+	{{body}}dddddddddd
+	{{ moment().format("dddd") }}
+{% endblock %}

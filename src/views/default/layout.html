@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	{% include "public/head.html" %}
+	{% block styles %}{% endblock %}
+</head>
+<body>
+	{% include "public/header.html" %}
+	{% block content %}{% endblock %}
+	{% include "public/footer.html" %}
+	{% block script %}{% endblock %}
+</body>
+</html>

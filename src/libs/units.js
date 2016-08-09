@@ -1,4 +1,4 @@
-'use static';
+'use strict';
 module.exports = {
   /**
    * [autoLoad 自动加载文件]
@@ -13,15 +13,13 @@ module.exports = {
 	        let newPath = path + '/' + file,
 	        		stat = fs.statSync(newPath);
 
-	        if (stat.isFile()) {
-	          if (/(.*)\.(js|coffee)/.test(file)) {
-	            require(newPath)
-	          }
+	        if (stat.isFile() && /(.*)\.(js|coffee)/.test(file)) {
+	          require(newPath);
 	        } else if (stat.isDirectory()) {
-	          walk(newPath)
+	          walk(newPath);
 	        }
-	      })
+	      });
 	  })(path);
 	}
 
-}
+};
