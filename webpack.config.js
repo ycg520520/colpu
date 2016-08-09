@@ -12,14 +12,15 @@ function getEntry() {
     var jsPath = path.resolve(srcDir, 'static/js');
     var dirs = fs.readdirSync(jsPath);
     var matchs = [], files = {};
+    console.log(dirs)
     dirs.forEach(function (item) {
         matchs = item.match(/(.+)\.js$/);
-        console.log(matchs);
+        // console.log(matchs);
         if (matchs) {
-            files[matchs[1]] = path.resolve(srcDir, 'js', item);
+            files[matchs[1]] = path.resolve(srcDir, 'static/js', item);
         }
     });
-    console.log(JSON.stringify(files));
+    // console.log(JSON.stringify(files));
     return files;
 }
 
@@ -35,9 +36,9 @@ module.exports = {
     },
     resolve: {
         alias: {
-            jquery: srcDir + "static/js/libs/jquery.min.js",
+            /*jquery: srcDir + "static/js/libs/jquery.min.js",
             core: srcDir + "static/js/core",
-            ui: srcDir + "static/js/ui"
+            ui: srcDir + "static/js/ui"*/
         }
     },
     plugins: [

@@ -1,10 +1,10 @@
 'use strict';
 module.exports = {
 	//首页
-	home: function* () {
+	home: function* (next) {
 		yield this.render('default/index',{title:'title is body', body: 'this is body.'});
 	},
-	search: function* () {
+	search: function* (next) {
 		yield this.render('default/search',{title:'title is search', body: 'this is search.'});
 	}
 

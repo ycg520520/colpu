@@ -1,3 +1,2 @@
-'use strict';
-var a = 'index.js';
-console.log(a)
+var a=5;
+var b = require("./models/index2.js");

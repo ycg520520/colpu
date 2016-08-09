@@ -48,7 +48,7 @@ app
     }
     yield next
   }))
-  .use(convert(_static(DIR + '/')))
+  .use(convert(_static(DIR)))
   .use(convert(views(DIR + '/views', {
     map: {html: 'nunjucks'},
     extension:'html'

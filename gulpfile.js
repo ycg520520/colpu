@@ -20,7 +20,7 @@ const CFG = {
   svgSprite: 'static/images/svg/**/*.svg', // svg图标
   sprite: 'static/images/sprite/**/*.png', // image图标
   js: '**/*.{js,coffee}', // js文件
-  images: '**/*.{jpg,png,gif,ico,svg}', // 多文件支持
+  images: 'static/images/**/*.{jpg,png,gif,ico,svg}', // 多文件支持
   html: '**/*.{html,htm,shtml,shtm}', // 多文件支持
   dist: 'dist/'
 }
@@ -41,7 +41,7 @@ gulp.task('styles', () => {
     .pipe($.notify({ message: 'SASS文件编译完成!' })) // 编译提示信息
     .pipe(browserSync.stream())
 });
-/*gulp.task('styles:build', () => {
+gulp.task('styles:build', () => {
   return gulp.src(CFG.src + CFG.sass)
     .pipe($.sourcemaps.init())
     .pipe($.if(/\.scss$/, $.sass({ precision: 10 })
@@ -54,8 +54,8 @@ gulp.task('styles', () => {
     }))
     .pipe(gulp.dest(CFG.dist+'static/styles'))
     .pipe($.notify({ message: 'SASS文件编译完成!' })) // 编译提示信息
-    .pipe(browserSync.stream())
-});*/
+    // .pipe(browserSync.stream())
+});
 
 // 将图片拷贝到目标目录并做压缩处理
 gulp.task('images:build', () => {
@@ -65,7 +65,7 @@ gulp.task('images:build', () => {
       title: 'images',
       showFiles: true
     }))
-    .pipe(gulp.dest(CFG.dist))
+    .pipe(gulp.dest(CFG.dist+'static/images'))
     .pipe($.notify({ message: '图片处理完成!' })) // 编译提示信息
     .pipe(browserSync.stream())
 });
@@ -135,6 +135,9 @@ gulp.task('js', () => {
 });
 gulp.task('js:build', () => {
   return gulp.src([CFG.src + CFG.js, '!' + CFG.src + 'static/' + CFG.js])
+    /*.pipe($.babel({
+      presets: ['es2015']
+    }))*/
     .pipe($.jshint()) // js语法校验
     .pipe($.jshint.reporter('default'))
     // .pipe($.uglify()) // 压缩js文件
@@ -168,11 +171,15 @@ gulp.task('html:build', () => {
         return $.if(/\.css$/, $.autoprefixer('> 0.2%'), $.cleanCss())
       })
     ))*/
-    .pipe($.useref({searchPath: CFG.src + 'static',basePath:'/static'}))
+    .pipe($.useref({searchPath: CFG.src, basePath:'/static'}))
     .pipe($.if(/\.css$/, $.cleanCss())) // 压缩CSS
-    .pipe($.if(/\.js$/, $.uglify())) // 压缩JS
+    // .pipe($.if(/\.js$/, $.uglify())) // 压缩JS
     .pipe($.if(/\.(css|js)$/, $.rev())) // 打MD5版本
     .pipe($.revReplace()) // 替换改变文件MD5版本号
+    .pipe($.rev.manifest({
+        base: CFG.dist + 'config/configRev.js',
+        merge: true // merge with the existing manifest (if one exists)
+    }))
     // 这里还可以对html进行压缩
     .pipe(gulp.dest(CFG.dist)) //将文件写入dist目录
     .pipe($.notify({ message: 'html拷贝完成!' })) // 编译提示信息
@@ -219,7 +226,18 @@ gulp.task('watch', () => {
   gulp.watch([CFG.src + CFG.fonts], ['fonts']);
 
   // 监听所有位在dist目录下的文件，一旦有更动，便进行重启服务器后刷新阅览器
-  gulp.watch([CFG.src + '**']).on('change',browserSync.reload);
+  // gulp.watch([CFG.src + '**']).on('change',browserSync.reload);
+});
+
+gulp.task('watch:build', () => {
+  // 监听文件变化并执行对应的task
+  gulp.watch([CFG.src + CFG.html], ['html:build']);
+  gulp.watch([CFG.src + CFG.js], ['js:build']);
+  gulp.watch([CFG.src + CFG.images], ['images:build']);
+  gulp.watch([CFG.src + CFG.fonts], ['fonts:build']);
+
+  // 监听所有位在dist目录下的文件，一旦有更动，便进行重启服务器后刷新阅览器
+  // gulp.watch([CFG.src + '**']).on('change',browserSync.reload);
 })
 
 // 开发服务器连接操作
@@ -242,7 +260,7 @@ gulp.task('nodemon', () => {
       console.log('重新启动!')
     })
 });
-gulp.task('nodemon:build', () => {
+gulp.task('nodemon:build',['js:build', 'html:build'], () => {
   return $.nodemon({
       script: CFG.dist + 'index.js',
       ext: 'html htm js json css jpg png gif eot svg ttf woff', // 监听变化的扩展名文件 htm shtml shtm js json css scss jpg png gif eot svg ttf woff
@@ -262,7 +280,6 @@ gulp.task('nodemon:build', () => {
     })
 });
 
-
 // 阅览器同步刷新
 gulp.task('browserSync', ['nodemon'], () => {
   browserSync.init({
@@ -276,8 +293,20 @@ gulp.task('browserSync', ['nodemon'], () => {
   });
 });
 
+gulp.task('browserSync:build', ['nodemon:build'], () => {
+  browserSync.init({
+    // server: CFG.src, // 静态服务路径
+    proxy: "http://localhost:4000", // 代理服务路径
+    // files: [CFG.src + '/static/**/*.*', CFG.src + 'views/**/*.*'],
+    files: [CFG.dist + '**'],
+    browser: 'google chrome',
+    notify: false,
+    port: 5000
+  });
+});
+
 // 构建开发时默认的任务
-gulp.task('default', ['browserSync', 'nodemon', 'js', 'styles', 'fonts', 'watch']);
+gulp.task('default', ['js', 'styles', 'fonts', 'watch', 'nodemon', 'browserSync']);
 
 // 开发完成后构建的任务
-gulp.task('build', ['browserSync', 'nodemon:build', 'js:build', 'html:build', 'fonts:build', 'images:build']);
+gulp.task('build', ['js:build', 'html:build', 'fonts:build', 'images:build', 'nodemon:build','browserSync:build','watch:build']);
