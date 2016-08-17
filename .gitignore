@@ -6,4 +6,6 @@
 .git
 .sass-cache
 node_modules/*
+bower_components/*
+src/static/vendors/* #修改bower安装的三方组件
 dist/*
