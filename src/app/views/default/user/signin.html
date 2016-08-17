@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+<!-- build:css static/styles/base.css -->
+<link rel="stylesheet" type="text/css" href="./static/styles/all.css">
+<!-- endbuild -->
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="./static/js/signin.js"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-5">
+      <form action="/user/signin" method="POST">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="signinName">用户名</label>
+            <input type="text" id="signinName" class="form-control" name="user[name]">
+          </div>
+          <div class="form-group">
+            <input type="text" id="signinPassword" class="form-control" name="user[password]">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" type="button" data-dismiss="modal" value="关闭">
+          <button class="btn btn-success" type="submit" value="提交">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

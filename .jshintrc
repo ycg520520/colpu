@@ -11,7 +11,7 @@
   "unused": true, // true: 变量未使用
   "boss": true, // true: 要求所有定义的变量被使用
   "eqnull": true, // true: 要求所有功能，运行在ES5的严格模式
-  "es3": true, // 兼容低级浏览器 IE 6/7/8/9
+  "es3": false, // 兼容低级浏览器 IE 6/7/8/9
   "node": true, // {int} Max depth of nested blocks (within functions)
   "-W117": true, // {int} Max number statements per function
   "esnext": true, // Allow ES6.

@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+<!-- build:css static/styles/base.css -->
+<link rel="stylesheet" type="text/css" href="./static/styles/all.css">
+<!-- endbuild -->
+{% endblock %}
+{% block script %}
+<!-- build:js static/js/base.js -->
+	<script type="text/javascript" src="./static/js/index.js"></script>
+	<script type="text/javascript" src="./static/js/models/index2.js"></script>
+<!-- endbuild -->
+{% endblock %}
+{% block content %}
+	{{body}}
+	{{ moment().format("dddd") }}
+{% endblock %}

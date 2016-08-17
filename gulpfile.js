@@ -14,20 +14,20 @@ const gulp = require('gulp'),
 const CFG = {
   // 路径配置
   src: 'src/',
-  sass: 'static/sass/**/*.{scss,sass}', // sass文件
+  sass: 'src/static/sass/**/*.{scss,sass}', // sass文件
   styles: '**/*.css', // css文件
-  fonts: 'static/sass/**/*.{eot,svg,ttf,woff}', // 字体文件
-  svgSprite: 'static/images/svg/**/*.svg', // svg图标
-  sprite: 'static/images/sprite/**/*.png', // image图标
-  js: '**/*.{js,coffee}', // js文件
-  images: 'static/images/**/*.{jpg,png,gif,ico,svg}', // 多文件支持
+  fonts: 'src/static/sass/**/*.{eot,svg,ttf,woff}', // 字体文件
+  svgSprite: 'src/static/images/svg/**/*.svg', // svg图标
+  sprite: 'src/static/images/sprite/**/*.png', // image图标
+  js: ['src/**/*.{js,coffee}','!src/static/vendors/**/*.{js,coffee}'], // js文件
+  images: 'src/static/images/**/*.{jpg,png,gif,ico,svg}', // 多文件支持
   html: '**/*.{html,htm,shtml,shtm}', // 多文件支持
   dist: 'dist/'
 }
 
 // scss文件编译和相关配置
 gulp.task('styles', () => {
-  return gulp.src(CFG.src + CFG.sass)
+  return gulp.src(CFG.sass)
     .pipe($.sourcemaps.init())
     .pipe($.if(/\.scss$/, $.sass({ precision: 10 })
       .on('error', $.sass.logError)))
@@ -37,12 +37,13 @@ gulp.task('styles', () => {
       title: 'styles',
       showFiles: true
     }))
+    .pipe($.changed(CFG.src+'static/styles'))
     .pipe(gulp.dest(CFG.src+'static/styles'))
     .pipe($.notify({ message: 'SASS文件编译完成!' })) // 编译提示信息
     .pipe(browserSync.stream())
 });
 gulp.task('styles:build', () => {
-  return gulp.src(CFG.src + CFG.sass)
+  return gulp.src(CFG.sass)
     .pipe($.sourcemaps.init())
     .pipe($.if(/\.scss$/, $.sass({ precision: 10 })
       .on('error', $.sass.logError)))
@@ -52,6 +53,7 @@ gulp.task('styles:build', () => {
       title: 'styles',
       showFiles: true
     }))
+    .pipe($.changed(CFG.dist+'static/styles'))
     .pipe(gulp.dest(CFG.dist+'static/styles'))
     .pipe($.notify({ message: 'SASS文件编译完成!' })) // 编译提示信息
     // .pipe(browserSync.stream())
@@ -59,24 +61,26 @@ gulp.task('styles:build', () => {
 
 // 将图片拷贝到目标目录并做压缩处理
 gulp.task('images:build', () => {
-  return gulp.src([CFG.src + CFG.images,'!'+ CFG.src + CFG.sprite,'!'+ CFG.src + CFG.svg])
+  return gulp.src([CFG.images,'!'+ CFG.sprite,'!'+ CFG.svgSprite])
     // .pipe($.imagemin()) // 图片压缩
     .pipe($.size({
       title: 'images',
       showFiles: true
     }))
+    .pipe($.changed(CFG.dist+'static/images'))
     .pipe(gulp.dest(CFG.dist+'static/images'))
     .pipe($.notify({ message: '图片处理完成!' })) // 编译提示信息
     .pipe(browserSync.stream())
 });
 // svg雪碧图纸制作 ??有待配置
 gulp.task('sprite', () => {
-  return gulp.src(CFG.src + CFG.images)
+  return gulp.src(CFG.images)
     .pipe(spritesmith({
       imgName: 'sprite.png',
       cssName: 'sprite.scss',
       cssFormat: 'scss'
     }))
+    .pipe($.changed('dist/css'))
     .pipe(gulp.dest('dist/css'))
     .pipe($.notify({ message: 'sprite图片处理完成!' })) // 编译提示信息
     .pipe(browserSync.stream())
@@ -84,7 +88,7 @@ gulp.task('sprite', () => {
 
 // svg雪碧图纸制作 ??有待配置
 gulp.task('svgSprite', () => {
-  return gulp.src(CFG.src + CFG.svgSprite)
+  return gulp.src(CFG.svgSprite)
     .pipe($.svgSprite({
       shape: {
         spacing: {
@@ -109,32 +113,35 @@ gulp.task('svgSprite', () => {
         mapname: "svg"
       }
     }))
+    .pipe($.changed(CFG.src+'static/images'))
     .pipe(gulp.dest(CFG.src+'static/images'))
     .pipe($.notify({ message: 'SVG Sprite图片处理完成!' })) // 编译提示信息
     .pipe(browserSync.stream())
 });
 gulp.task('pngSprite', ['svgSprite'], function() {
-  return gulp.src(CFG.src + CFG.svgSprite)
+  return gulp.src(CFG.svgSprite)
     .pipe($.svg2png())
     .pipe($.size({
       showFiles: true
     }))
+    .pipe($.changed(CFG.src+'static/images'))
     .pipe(gulp.dest(CFG.src+'static/images'));
 });
 
 // js文件操作
 gulp.task('js', () => {
-  return gulp.src([CFG.src + CFG.js])
+  return gulp.src([CFG.js])
     .pipe($.babel({
       presets: ['es2015']
     }))
+    .pipe($.changed(CFG.src))
     .pipe($.jshint()) // js语法校验
     .pipe($.jshint.reporter('default'))
     .pipe($.notify({ message: 'JS校验完成!' })) // 编译提示信息
     .pipe(browserSync.stream())
 });
 gulp.task('js:build', () => {
-  return gulp.src([CFG.src + CFG.js, '!' + CFG.src + 'static/' + CFG.js])
+  return gulp.src([CFG.js])
     /*.pipe($.babel({
       presets: ['es2015']
     }))*/
@@ -146,6 +153,7 @@ gulp.task('js:build', () => {
       title: 'JS',
       showFiles: true
     }))
+    .pipe($.changed(CFG.dist))
     .pipe(gulp.dest(CFG.dist))
     .pipe($.notify({ message: 'JS处理完成!' })) // 编译提示信息
     .pipe(browserSync.stream())
@@ -176,11 +184,12 @@ gulp.task('html:build', () => {
     // .pipe($.if(/\.js$/, $.uglify())) // 压缩JS
     .pipe($.if(/\.(css|js)$/, $.rev())) // 打MD5版本
     .pipe($.revReplace()) // 替换改变文件MD5版本号
-    .pipe($.rev.manifest({
+    /*.pipe($.rev.manifest({
         base: CFG.dist + 'config/configRev.js',
         merge: true // merge with the existing manifest (if one exists)
-    }))
+    }))*/
     // 这里还可以对html进行压缩
+    .pipe($.changed(CFG.dist)) //将文件写入dist目录
     .pipe(gulp.dest(CFG.dist)) //将文件写入dist目录
     .pipe($.notify({ message: 'html拷贝完成!' })) // 编译提示信息
     .pipe(browserSync.stream())
@@ -188,13 +197,15 @@ gulp.task('html:build', () => {
 
 // 处理字体
 gulp.task('fonts', () => {
-  return gulp.src(CFG.src + CFG.fonts)
+  return gulp.src(CFG.fonts)
+    .pipe($.changed(CFG.src + 'static/styles')) // 将字体文件写入dist目录
     .pipe(gulp.dest(CFG.src + 'static/styles')) // 将字体文件写入dist目录
     .pipe($.notify({ message: '字体文件处理完毕!' })) // 编译提示信息
     .pipe(browserSync.stream())
 });
 gulp.task('fonts:build', () => {
-  return gulp.src(CFG.src + CFG.fonts)
+  return gulp.src(CFG.fonts)
+    .pipe($.changed(CFG.dist + 'static/styles')) // 将字体文件写入dist目录
     .pipe(gulp.dest(CFG.dist + 'static/styles')) // 将字体文件写入dist目录
     .pipe($.notify({ message: '字体文件处理完毕!' })) // 编译提示信息
     .pipe(browserSync.stream())
@@ -220,10 +231,10 @@ gulp.task('clean', () => {
 // 监听文件变化并执行对应的task
 gulp.task('watch', () => {
   // 监听文件变化并执行对应的task
-  gulp.watch([CFG.src + CFG.sass], ['styles']);
-  gulp.watch([CFG.src + CFG.js], ['js']);
-  // gulp.watch([CFG.src + CFG.images], ['images']);
-  gulp.watch([CFG.src + CFG.fonts], ['fonts']);
+  gulp.watch([CFG.sass], ['styles']);
+  gulp.watch([CFG.js], ['js']);
+  // gulp.watch([CFG.images], ['images']);
+  gulp.watch([CFG.fonts], ['fonts']);
 
   // 监听所有位在dist目录下的文件，一旦有更动，便进行重启服务器后刷新阅览器
   // gulp.watch([CFG.src + '**']).on('change',browserSync.reload);
@@ -232,9 +243,9 @@ gulp.task('watch', () => {
 gulp.task('watch:build', () => {
   // 监听文件变化并执行对应的task
   gulp.watch([CFG.src + CFG.html], ['html:build']);
-  gulp.watch([CFG.src + CFG.js], ['js:build']);
-  gulp.watch([CFG.src + CFG.images], ['images:build']);
-  gulp.watch([CFG.src + CFG.fonts], ['fonts:build']);
+  gulp.watch([CFG.js], ['js:build']);
+  gulp.watch([CFG.images], ['images:build']);
+  gulp.watch([CFG.fonts], ['fonts:build']);
 
   // 监听所有位在dist目录下的文件，一旦有更动，便进行重启服务器后刷新阅览器
   // gulp.watch([CFG.src + '**']).on('change',browserSync.reload);
