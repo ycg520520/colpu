@@ -27,6 +27,7 @@
 ├─ dist/：存放上线打包文件的目录；
 ├─ test/：存放测试文件的目录；
 ├─ .babelrc：统一编码配置文件，`针对babel编译`；
+├─ .bowerrc：自定义bower下载的代码包的目录；
 ├─ .editorconfig：统一编码配置文件，`针对支持editorconfig编辑器`；
 ├─ .gitignore：这是git忽略配置文件，`推送到git时忽略的文件配置列表`；
 ├─ .jshintrc：js语法校验配置文件；

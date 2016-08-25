@@ -12,7 +12,7 @@
     "mvc",
     "framework"
   ],
-  "directory": "src/static/vendors/",
+  "directory": "src/static/vendors",
   "homepage": "https://github.com/ycg520520/colpu",
   "private": true,
   "ignore": [
